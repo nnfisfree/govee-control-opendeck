@@ -1,0 +1,32 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "**Never paste your Govee API key here.**"
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: "Plugin 0.1.0, OpenDeck 2.x, Linux (Arch)"
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Hardware
+      placeholder: "Stream Deck+, Govee H6008 and H619A"
+  - type: textarea
+    id: log
+    attributes:
+      label: Plugin log
+      description: From ~/.local/share/opendeck/logs/plugins/io.github.nnfisfree.govee-control.sdPlugin.log (Linux)
+      render: text

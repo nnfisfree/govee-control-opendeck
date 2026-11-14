@@ -1,0 +1,11 @@
+{
+	"io.github.nnfisfree.govee-control": {
+		"name": "Govee Control",
+		"author": "nnfisfree",
+		"repository": "https://github.com/nnfisfree/govee-control-opendeck",
+		"description": "Native OpenDeck plugin to control Govee lights (power, brightness, colour, colour temperature) from Stream Deck keys and dials using the official Govee API",
+		"flags": {
+			"ai_assisted": true
+		}
+	}
+}

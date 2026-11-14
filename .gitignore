@@ -1,0 +1,10 @@
+# Build output
+/target
+/dist
+*.streamDeckPlugin
+
+# Secrets: never commit your Govee API key
+.env
+.env.*
+*.key
+secrets/

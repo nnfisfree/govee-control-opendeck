@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Brightness</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section data-controller="Keypad">
+			<h2>Key</h2>
+			<div class="row">
+				<label for="mode">On press</label>
+				<select id="mode" data-setting="mode">
+					<option value="set">Set brightness</option>
+					<option value="step">Step brightness</option>
+				</select>
+			</div>
+			<div class="row" data-show-if="mode:set">
+				<label for="value">Brightness</label>
+				<div class="inline">
+					<input id="value" type="range" min="1" max="100" data-setting="value" />
+					<output data-for="value" data-suffix="%"></output>
+				</div>
+			</div>
+			<div class="row" data-show-if="mode:step">
+				<label for="step">Step (%)</label>
+				<input id="step" type="number" min="-100" max="100" data-setting="step" />
+			</div>
+			<p class="hint" data-show-if="mode:step">Use a negative step for a "dimmer" key.</p>
+			<div class="row">
+				<label for="show">Show value</label>
+				<input id="show" type="checkbox" data-setting="showValue" />
+			</div>
+		</section>
+		<section data-controller="Encoder">
+			<h2>Dial</h2>
+			<div class="row">
+				<label for="dial-step">% per tick</label>
+				<input id="dial-step" type="number" min="1" max="50" data-setting="dialStep" />
+			</div>
+			<p class="hint">Turn to change brightness, press or tap to toggle power.</p>
+		</section>
+		<script>
+			GoveePI.start({
+				feature: "brightness",
+				defaults: { devices: [], mode: "set", value: 50, step: 10, dialStep: 5, showValue: true },
+			});
+		</script>
+	</body>
+</html>

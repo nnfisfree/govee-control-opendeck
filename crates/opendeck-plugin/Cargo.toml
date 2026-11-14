@@ -1,0 +1,29 @@
+[package]
+name = "govee-control-opendeck"
+description = "OpenDeck plugin to control Govee lights from Stream Deck keys and dials"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "govee-control-opendeck"
+path = "src/main.rs"
+
+[dependencies]
+govee-api.workspace = true
+base64.workspace = true
+log.workspace = true
+openaction.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+simplelog.workspace = true
+tokio.workspace = true
+
+[dev-dependencies]
+futures-util.workspace = true
+tokio = { workspace = true, features = ["net", "process"] }
+tokio-tungstenite.workspace = true
+wiremock.workspace = true

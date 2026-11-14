@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Power</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section>
+			<h2>Action</h2>
+			<div class="row">
+				<label for="mode">On press</label>
+				<select id="mode" data-setting="mode">
+					<option value="toggle">Toggle</option>
+					<option value="on">Turn on</option>
+					<option value="off">Turn off</option>
+				</select>
+			</div>
+		</section>
+		<script>
+			GoveePI.start({ feature: "power", defaults: { devices: [], mode: "toggle" } });
+		</script>
+	</body>
+</html>

@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an idea for the plugin
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      description: Describe the feature and how you would use it on your Stream Deck.
+    validations:
+      required: true
+  - type: input
+    id: lights
+    attributes:
+      label: Which Govee lights would use it?
+      placeholder: "H6008, H619A"

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Color Temperature</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section data-controller="Keypad">
+			<h2>Key</h2>
+			<div class="row">
+				<label for="mode">On press</label>
+				<select id="mode" data-setting="mode">
+					<option value="set">Set temperature</option>
+					<option value="step">Step temperature</option>
+				</select>
+			</div>
+			<div class="row" data-show-if="mode:set">
+				<label for="value">Temperature</label>
+				<div class="inline">
+					<input id="value" type="range" min="2000" max="9000" step="100" data-setting="value" />
+					<output data-for="value" data-suffix="K"></output>
+				</div>
+			</div>
+			<div class="row" data-show-if="mode:step">
+				<label for="step">Step (K)</label>
+				<input id="step" type="number" min="-5000" max="5000" step="100" data-setting="step" />
+			</div>
+			<p class="hint" data-show-if="mode:step">Positive steps make the light cooler, negative steps warmer.</p>
+			<div class="row">
+				<label for="show">Show value</label>
+				<input id="show" type="checkbox" data-setting="showValue" />
+			</div>
+		</section>
+		<section data-controller="Encoder">
+			<h2>Dial</h2>
+			<div class="row">
+				<label for="dial-step">K per tick</label>
+				<input id="dial-step" type="number" min="10" max="1000" step="10" data-setting="dialStep" />
+			</div>
+			<p class="hint">Turn to change the temperature, press or tap to toggle power.</p>
+		</section>
+		<p class="hint" id="range-hint"></p>
+		<script>
+			// Limit the slider to the range every selected light supports.
+			function updateRange(settings, status) {
+				const selected = settings.devices || [];
+				const lights = (status?.devices || []).filter(
+					(d) => d.features.kelvin && selected.some((s) => s.device === d.device && s.sku === d.sku),
+				);
+				let min = 2000;
+				let max = 9000;
+				if (lights.length) {
+					min = Math.max(...lights.map((d) => d.features.kelvinMin));
+					max = Math.min(...lights.map((d) => d.features.kelvinMax));
+				}
+				const slider = document.getElementById("value");
+				slider.min = min;
+				slider.max = max;
+				document.getElementById("range-hint").textContent = lights.length
+					? `Selected lights support ${min}K – ${max}K.`
+					: "";
+			}
+			GoveePI.start({
+				feature: "kelvin",
+				defaults: { devices: [], mode: "set", value: 4000, step: 500, dialStep: 100, showValue: true },
+				onChange: updateRange,
+			});
+		</script>
+	</body>
+</html>

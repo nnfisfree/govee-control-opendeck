@@ -1,0 +1,34 @@
+[workspace]
+resolver = "3"
+members = ["crates/govee-api", "crates/opendeck-plugin", "crates/govee-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+authors = ["nnfisfree"]
+repository = "https://github.com/nnfisfree/govee-control-opendeck"
+publish = false
+
+[workspace.dependencies]
+govee-api = { path = "crates/govee-api" }
+base64 = "0.23.1"
+log = "0.4.35"
+openaction = "2.8"
+reqwest = { version = "0.13.5", default-features = false, features = ["json", "rustls", "http2"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+simplelog = "0.12.2"
+thiserror = "2.0.21"
+tokio = { version = "1.54.1", features = ["rt-multi-thread", "macros", "time", "sync"] }
+uuid = { version = "1.29.2", features = ["v4"] }
+# Test-only
+futures-util = "0.3"
+tokio-tungstenite = "0.28"
+wiremock = "0.6.5"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+opt-level = 3
