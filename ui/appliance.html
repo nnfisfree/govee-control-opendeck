@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Appliance</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section>
+			<h2>Appliance</h2>
+			<div class="row">
+				<label for="function">Control</label>
+				<select id="function" data-setting="function">
+					<option value="mode">Work mode</option>
+					<option value="temperature">Target temperature</option>
+				</select>
+			</div>
+			<div data-show-if="function:mode">
+				<div class="row">
+					<label for="work-mode">Mode</label>
+					<select id="work-mode" data-setting="workMode" data-type="int"></select>
+				</div>
+				<div class="row" id="value-list-row" hidden>
+					<label for="mode-value">Level</label>
+					<select id="mode-value" data-type="int"></select>
+				</div>
+				<div class="row" id="value-range-row" hidden>
+					<label for="mode-range">Level</label>
+					<div class="inline">
+						<input id="mode-range" type="range" />
+						<output id="mode-range-out"></output>
+					</div>
+				</div>
+			</div>
+			<div data-show-if="function:temperature">
+				<div class="row" data-controller="Keypad">
+					<label for="temperature-mode">On press</label>
+					<select id="temperature-mode" data-setting="temperatureMode">
+						<option value="set">Set temperature</option>
+						<option value="step">Step temperature</option>
+					</select>
+				</div>
+				<div class="row" data-show-if="temperatureMode:set">
+					<label for="temperature">Temperature</label>
+					<input id="temperature" type="number" data-setting="temperature" />
+				</div>
+				<div class="row" data-show-if="temperatureMode:step">
+					<label for="temperature-step">Step</label>
+					<input id="temperature-step" type="number" min="-20" max="20" data-setting="temperatureStep" />
+				</div>
+				<div class="row">
+					<label for="fahrenheit">Fahrenheit</label>
+					<input id="fahrenheit" type="checkbox" data-setting="fahrenheit" />
+				</div>
+			</div>
+			<p class="hint" id="appliance-hint"></p>
+			<p class="hint" data-controller="Encoder">
+				Turn to change the level or temperature, press or tap to toggle power.
+			</p>
+			<p class="hint">Use the Power action to switch an appliance on and off.</p>
+		</section>
+		<script>
+			const workSelect = document.getElementById("work-mode");
+			const valueSelect = document.getElementById("mode-value");
+			const range = document.getElementById("mode-range");
+			const rangeOut = document.getElementById("mode-range-out");
+
+			function capability(device, instance) {
+				return (device?.capabilities || []).find((c) => c.instance === instance);
+			}
+
+			function field(cap, name) {
+				return (cap?.parameters?.fields || []).find((f) => f.fieldName === name);
+			}
+
+			// "gearMode" → "Gear Mode"
+			function pretty(name) {
+				return String(name).charAt(0).toUpperCase() + String(name).slice(1).replace(/([a-z])([A-Z])/g, "$1 $2");
+			}
+
+			function modes(device) {
+				return field(capability(device, "workMode"), "workMode")?.options || [];
+			}
+
+			// The values a mode accepts: { list }, { min, max } or { fixed }.
+			function values(device, workMode) {
+				const cap = capability(device, "workMode");
+				const name = modes(device).find((o) => o.value === workMode)?.name;
+				const entry = (field(cap, "modeValue")?.options || []).find((o) => o.name === name);
+				if (entry?.options?.length) return { list: entry.options };
+				if (entry?.range) return { min: entry.range.min, max: entry.range.max };
+				return { fixed: entry?.defaultValue ?? 0 };
+			}
+
+			function saveValue(value, label) {
+				const s = GoveePI.settings;
+				const modeName = modes(GoveePI.selectedDevices()[0]).find((o) => o.value === s.workMode)?.name;
+				GoveePI.save("modeValue", value);
+				GoveePI.save("modeLabel", modeName ? pretty(modeName) + (label !== undefined ? ": " + label : "") : "");
+			}
+
+			valueSelect.addEventListener("change", () => {
+				const v = parseInt(valueSelect.value, 10);
+				saveValue(v, valueSelect.selectedOptions[0]?.textContent);
+			});
+			range.addEventListener("input", () => {
+				rangeOut.textContent = range.value;
+			});
+			range.addEventListener("change", () => saveValue(parseInt(range.value, 10), range.value));
+
+			let lastKey = "";
+			function onChange(s, status) {
+				const device = GoveePI.selectedDevices()[0];
+				const key = JSON.stringify(s.devices || []) + (status ? "1" : "0") + s.workMode + s.function;
+				if (key === lastKey) return;
+				lastKey = key;
+
+				GoveePI.fillSelect(
+					workSelect,
+					modes(device).map((o) => ({ value: o.value, label: pretty(o.name) })),
+					device ? "No work modes" : "Tick a device first",
+				);
+				const v = values(device, s.workMode);
+				document.getElementById("value-list-row").hidden = !v.list;
+				document.getElementById("value-range-row").hidden = v.min === undefined;
+				if (v.list) {
+					valueSelect.replaceChildren(
+						...v.list.map((o) => GoveePI.el("option", { value: o.value }, pretty(o.name))),
+					);
+					const match = v.list.find((o) => o.value === s.modeValue) || v.list[0];
+					valueSelect.value = String(match.value);
+					if (match.value !== s.modeValue || !s.modeLabel) saveValue(match.value, pretty(match.name));
+				} else if (v.min !== undefined) {
+					range.min = v.min;
+					range.max = v.max;
+					const value = Math.min(Math.max(s.modeValue, v.min), v.max);
+					range.value = value;
+					rangeOut.textContent = value;
+					if (value !== s.modeValue || !s.modeLabel) saveValue(value, String(value));
+				} else if (device && (s.modeValue !== v.fixed || !s.modeLabel)) {
+					saveValue(v.fixed);
+				}
+
+				const t = field(capability(device, "targetTemperature"), "temperature")?.range;
+				document.getElementById("appliance-hint").textContent =
+					s.function === "temperature" && t ? `This device accepts ${t.min}–${t.max}°.` : "";
+			}
+
+			GoveePI.start({
+				feature: "appliance",
+				defaults: {
+					devices: [],
+					function: "mode",
+					workMode: 1,
+					modeValue: 0,
+					modeLabel: "",
+					temperature: 22,
+					fahrenheit: false,
+					temperatureMode: "set",
+					temperatureStep: 1,
+				},
+				onChange,
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Cycle</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section>
+			<h2>Cycle</h2>
+			<div class="row">
+				<label for="kind">Cycle through</label>
+				<select id="kind" data-setting="kind">
+					<option value="color">Colours</option>
+					<option value="brightness">Brightness levels</option>
+					<option value="kelvin">White temperatures</option>
+					<option value="scene">Govee scenes</option>
+					<option value="diy">DIY scenes</option>
+				</select>
+			</div>
+			<div class="row top">
+				<label for="items">Items</label>
+				<textarea id="items" data-setting="items" spellcheck="false" rows="4"></textarea>
+			</div>
+			<p class="hint" id="items-hint"></p>
+			<div class="row" id="add-scene-row" hidden>
+				<label for="add-scene">Add scene</label>
+				<div class="inline">
+					<select id="add-scene"></select>
+					<button id="add">Add</button>
+				</div>
+			</div>
+			<div class="row top" id="colour-picker-row" hidden>
+				<label for="add-color">Add colour</label>
+				<div class="inline">
+					<input id="add-color" type="color" value="#ff8800" />
+					<button id="add-color-button">Add</button>
+				</div>
+			</div>
+			<div class="row" data-controller="Keypad">
+				<label for="show-value">Show value</label>
+				<input id="show-value" type="checkbox" data-setting="showValue" />
+			</div>
+			<p class="hint" data-controller="Keypad">Each press moves to the next item and wraps around.</p>
+			<p class="hint" data-controller="Encoder">Turn to move through the list, press or tap to toggle power.</p>
+		</section>
+		<script>
+			const HINTS = {
+				color: "Colours like #ff0000, separated by commas or new lines.",
+				brightness: "Percentages like 10, 50, 100.",
+				kelvin: "Temperatures in Kelvin like 2700, 4000, 6500.",
+				scene: "One scene name per line, exactly as Govee names it.",
+				diy: "One DIY scene name per line, exactly as in the Govee Home app.",
+			};
+			const EXAMPLES = {
+				color: "#ff0000, #30d158, #0a84ff",
+				brightness: "10, 50, 100",
+				kelvin: "2700, 4000, 6500",
+				scene: "",
+				diy: "",
+			};
+			const addSelect = document.getElementById("add-scene");
+			let lastKind = null;
+			let requested = "";
+
+			function append(item, separator) {
+				const s = GoveePI.settings;
+				const current = (s.items || "").trim();
+				GoveePI.save("items", current ? current + separator + item : item);
+			}
+
+			document.getElementById("add").addEventListener("click", () => {
+				if (addSelect.value) append(addSelect.value, "\n");
+			});
+			document.getElementById("add-color-button").addEventListener("click", () => {
+				append(document.getElementById("add-color").value, ", ");
+			});
+
+			function onChange(s, status) {
+				const isScene = s.kind === "scene" || s.kind === "diy";
+				document.getElementById("items-hint").textContent = HINTS[s.kind] || "";
+				document.getElementById("add-scene-row").hidden = !isScene;
+				document.getElementById("colour-picker-row").hidden = s.kind !== "color";
+				// Swap the example list when the kind changes and the list still holds an example.
+				const kindChanged = lastKind !== null && lastKind !== s.kind;
+				lastKind = s.kind;
+				if (kindChanged && Object.values(EXAMPLES).includes((s.items || "").trim())) {
+					GoveePI.save("items", EXAMPLES[s.kind]);
+				}
+				const devices = s.devices || [];
+				const key = s.kind + JSON.stringify(devices);
+				if (isScene && status?.hasKey && devices.length && key !== requested) {
+					requested = key;
+					GoveePI.fillSelect(addSelect, [], "Loading…");
+					GoveePI.toPlugin({ type: "scenes", source: s.kind, devices });
+				}
+			}
+
+			GoveePI.start({
+				feature: "light",
+				defaults: { devices: [], kind: "color", items: EXAMPLES.color, showValue: true },
+				onChange,
+				onMessage(payload) {
+					if (payload.type !== "scenes" || payload.source !== GoveePI.settings.kind) return;
+					GoveePI.fillSelect(
+						addSelect,
+						(payload.names || []).map((n) => ({ value: n })),
+						payload.error ? "Could not load scenes" : "No scenes found",
+					);
+				},
+			});
+		</script>
+	</body>
+</html>

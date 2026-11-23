@@ -20,7 +20,7 @@ jobs:
       - run: cargo fmt --check
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - name: Validate manifest
-        run: python3 -c "import json; m=json.load(open('assets/manifest.json')); bid=m['Actions'][0]['UUID'].rsplit('.',1)[0]; assert all(a['UUID'].startswith(bid+'.') for a in m['Actions'])"
+        run: python3 -c "import json; m=json.load(open('bundle/manifest.json')); bid=m['Actions'][0]['UUID'].rsplit('.',1)[0]; assert all(a['UUID'].startswith(bid+'.') for a in m['Actions'])"
 
   test:
     strategy:

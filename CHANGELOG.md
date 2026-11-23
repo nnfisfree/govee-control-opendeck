@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+### New actions
+- **Scene**: play a built-in Govee scene, a DIY scene or a saved snapshot. On a dial, turn to browse the scenes.
+- **Preset**: set power, colour (or white temperature) and brightness in one press.
+- **Cycle**: step through a list of colours, brightness levels, white temperatures or scenes.
+- **Music Mode**: start music-reactive mode with a chosen style, sensitivity and colour.
+- **Segment Color**: colour or dim individual segments of light strips and bars, with one colour or a gradient.
+- **Toggle**: switch device features such as the gradient, night light, DreamView or oscillation.
+- **Sensor**: show the temperature and humidity of Govee thermometers and hygrometers.
+- **Appliance**: set the work mode or target temperature of Govee heaters, fans, purifiers and humidifiers.
+
+### Improvements
+- Long press: every key action can do something else when held for half a second.
+- Keys and dials show "Offline" when Govee reports the device as unreachable.
+- The Color dial can step through a list of your own colours instead of shifting the hue.
+- The Power action also lists Govee appliances.
+- Scene and music-mode names are looked up on each device, so groups can mix light models.
+
 ## 0.1.0
 
 First release.

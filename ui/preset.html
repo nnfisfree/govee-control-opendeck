@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Preset</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section>
+			<h2>Preset</h2>
+			<div class="row">
+				<label for="turn-on">Turn on</label>
+				<input id="turn-on" type="checkbox" data-setting="turnOn" />
+			</div>
+			<div class="row">
+				<label for="color-mode">Colour</label>
+				<select id="color-mode" data-setting="colorMode">
+					<option value="rgb">Colour</option>
+					<option value="kelvin">White temperature</option>
+					<option value="none">Leave as is</option>
+				</select>
+			</div>
+			<div class="row" data-show-if="colorMode:rgb">
+				<label for="color">Colour</label>
+				<div class="inline">
+					<input id="color" type="color" data-setting="color" />
+					<output data-for="color"></output>
+				</div>
+			</div>
+			<div class="row" data-show-if="colorMode:kelvin">
+				<label for="kelvin">Temperature</label>
+				<div class="inline">
+					<input id="kelvin" type="range" min="2000" max="9000" step="100" data-setting="kelvin" />
+					<output data-for="kelvin" data-suffix="K"></output>
+				</div>
+			</div>
+			<div class="row">
+				<label for="set-brightness">Set brightness</label>
+				<input id="set-brightness" type="checkbox" data-setting="setBrightness" />
+			</div>
+			<div class="row" data-show-if="setBrightness:true">
+				<label for="brightness">Brightness</label>
+				<div class="inline">
+					<input id="brightness" type="range" min="1" max="100" data-setting="brightness" />
+					<output data-for="brightness" data-suffix="%"></output>
+				</div>
+			</div>
+			<p class="hint" data-controller="Keypad">One press applies everything above.</p>
+		</section>
+		<section data-controller="Encoder">
+			<h2>Dial</h2>
+			<div class="row">
+				<label for="dial-step">% per tick</label>
+				<input id="dial-step" type="number" min="1" max="50" data-setting="dialStep" />
+			</div>
+			<p class="hint">Press to apply the preset, turn to fine-tune brightness, tap the screen to toggle power.</p>
+		</section>
+		<script>
+			GoveePI.start({
+				feature: "light",
+				defaults: {
+					devices: [],
+					turnOn: true,
+					setBrightness: true,
+					brightness: 80,
+					colorMode: "rgb",
+					color: "#ffb347",
+					kelvin: 3000,
+					dialStep: 5,
+				},
+			});
+		</script>
+	</body>
+</html>

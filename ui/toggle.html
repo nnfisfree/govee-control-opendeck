@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Toggle</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section>
+			<h2>Feature</h2>
+			<div class="row">
+				<label for="instance">Feature</label>
+				<select id="instance" data-setting="instance"></select>
+			</div>
+			<div class="row">
+				<label for="mode">On press</label>
+				<select id="mode" data-setting="mode">
+					<option value="toggle">Toggle</option>
+					<option value="on">Turn on</option>
+					<option value="off">Turn off</option>
+				</select>
+			</div>
+			<div class="row" data-controller="Keypad">
+				<label for="show-name">Show name</label>
+				<input id="show-name" type="checkbox" data-setting="showName" />
+			</div>
+		</section>
+		<script>
+			const select = document.getElementById("instance");
+
+			// "dreamViewToggle" → "Dream View"
+			function friendly(instance) {
+				const base = instance.replace(/Toggle$/, "");
+				return base.charAt(0).toUpperCase() + base.slice(1).replace(/([A-Z])/g, " $1");
+			}
+
+			// Toggles every selected device has.
+			function commonToggles(devices) {
+				const lists = devices.map((d) =>
+					(d.capabilities || []).filter((c) => c.type === "devices.capabilities.toggle").map((c) => c.instance),
+				);
+				if (lists.length === 0) return [];
+				return lists[0].filter((i) => lists.every((l) => l.includes(i)));
+			}
+
+			let lastKey = "";
+			GoveePI.start({
+				feature: "toggle",
+				defaults: { devices: [], instance: "", mode: "toggle", showName: true },
+				onChange(s, status) {
+					const key = JSON.stringify(s.devices || []) + (status ? "1" : "0");
+					if (key === lastKey) return;
+					lastKey = key;
+					const toggles = commonToggles(GoveePI.selectedDevices());
+					GoveePI.fillSelect(
+						select,
+						toggles.map((i) => ({ value: i, label: friendly(i) })),
+						(s.devices || []).length ? "No feature in common" : "Tick a device first",
+					);
+				},
+			});
+		</script>
+	</body>
+</html>

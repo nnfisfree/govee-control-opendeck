@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Segment Color</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section>
+			<h2>Segments</h2>
+			<div class="row">
+				<label for="segments">Segments</label>
+				<input id="segments" type="text" data-setting="segments" placeholder="all" spellcheck="false" />
+			</div>
+			<p class="hint" id="segment-hint">"all", or numbers and ranges like 1-5, 8.</p>
+			<div class="row">
+				<label for="style">Style</label>
+				<select id="style" data-setting="style">
+					<option value="solid">One colour</option>
+					<option value="gradient">Gradient</option>
+					<option value="brightness">Brightness</option>
+				</select>
+			</div>
+			<div class="row" id="color-row">
+				<label for="color">Colour</label>
+				<div class="inline">
+					<input id="color" type="color" data-setting="color" />
+					<input id="color2" type="color" data-setting="color2" data-show-if="style:gradient" />
+				</div>
+			</div>
+			<div class="row" data-show-if="style:brightness">
+				<label for="brightness">Brightness</label>
+				<div class="inline">
+					<input id="brightness" type="range" min="1" max="100" data-setting="brightness" />
+					<output data-for="brightness" data-suffix="%"></output>
+				</div>
+			</div>
+			<p class="hint" data-show-if="style:gradient">
+				A gradient sends one command per segment, so long strips take a few seconds to fill.
+			</p>
+		</section>
+		<section data-controller="Encoder">
+			<h2>Dial</h2>
+			<div class="row">
+				<label for="dial-step">Step per tick</label>
+				<input id="dial-step" type="number" min="1" max="90" data-setting="dialStep" />
+			</div>
+			<p class="hint">
+				Turn to shift the hue (or the brightness in brightness style), press or tap to toggle power.
+			</p>
+		</section>
+		<script>
+			GoveePI.start({
+				feature: "segments",
+				defaults: {
+					devices: [],
+					segments: "all",
+					style: "solid",
+					color: "#ff0000",
+					color2: "#0000ff",
+					brightness: 100,
+					dialStep: 10,
+				},
+				onChange(s) {
+					document.getElementById("color-row").hidden = s.style === "brightness";
+					const counts = GoveePI.selectedDevices().map((d) => `${d.name}: ${d.features.segments}`);
+					document.getElementById("segment-hint").textContent =
+						'"all", or numbers and ranges like 1-5, 8.' + (counts.length ? " Segments — " + counts.join(", ") : "");
+				},
+			});
+		</script>
+	</body>
+</html>

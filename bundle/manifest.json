@@ -1,0 +1,343 @@
+{
+	"Name": "Govee Control",
+	"Author": "nnfisfree",
+	"Description": "Control Govee lights and appliances with the official Govee cloud API: power, brightness, colour, white temperature, scenes, presets, music mode, light-strip segments and more, plus temperature and humidity sensors. Works on keys and Stream Deck+ dials, for single devices or groups.",
+	"Version": "0.1.0",
+	"URL": "https://github.com/nnfisfree/govee-control-opendeck",
+	"SDKVersion": 2,
+	"Icon": "icons/plugin",
+	"Category": "Govee Control",
+	"CategoryIcon": "icons/category",
+	"OS": [
+		{
+			"Platform": "linux"
+		},
+		{
+			"Platform": "windows"
+		},
+		{
+			"Platform": "mac"
+		}
+	],
+	"CodePaths": {
+		"x86_64-unknown-linux-gnu": "bin/govee-control-opendeck-x86_64-unknown-linux-gnu",
+		"aarch64-unknown-linux-gnu": "bin/govee-control-opendeck-aarch64-unknown-linux-gnu",
+		"x86_64-pc-windows-msvc": "bin/govee-control-opendeck-x86_64-pc-windows-msvc.exe",
+		"x86_64-apple-darwin": "bin/govee-control-opendeck-x86_64-apple-darwin",
+		"aarch64-apple-darwin": "bin/govee-control-opendeck-aarch64-apple-darwin"
+	},
+	"CodePathLin": "bin/govee-control-opendeck-x86_64-unknown-linux-gnu",
+	"CodePathWin": "bin/govee-control-opendeck-x86_64-pc-windows-msvc.exe",
+	"CodePathMac": "bin/govee-control-opendeck-x86_64-apple-darwin",
+	"Actions": [
+		{
+			"UUID": "io.github.nnfisfree.govee-control.power",
+			"Name": "Power",
+			"Tooltip": "Turn Govee lights and appliances on, off, or toggle them",
+			"Icon": "icons/power",
+			"PropertyInspectorPath": "property-inspector/power.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"DisableAutomaticStates": true,
+			"Encoder": {
+				"layout": "$B1",
+				"TriggerDescription": {
+					"Push": "Power",
+					"Touch": "Power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/power-off",
+					"Name": "Off"
+				},
+				{
+					"Image": "icons/power-on",
+					"Name": "On"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.brightness",
+			"Name": "Brightness",
+			"Tooltip": "Set or step the brightness. On a dial: turn to adjust, press to toggle power",
+			"Icon": "icons/brightness",
+			"PropertyInspectorPath": "property-inspector/brightness.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$B1",
+				"TriggerDescription": {
+					"Rotate": "Brightness",
+					"Push": "Toggle power",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/brightness-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.color",
+			"Name": "Color",
+			"Tooltip": "Set an RGB colour. On a dial: turn to shift the hue, press to toggle power",
+			"Icon": "icons/color",
+			"PropertyInspectorPath": "property-inspector/color.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$B1",
+				"TriggerDescription": {
+					"Rotate": "Hue",
+					"Push": "Toggle power",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/color-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.temperature",
+			"Name": "Color Temperature",
+			"Tooltip": "Set or step the white colour temperature (Kelvin). On a dial: turn to adjust, press to toggle power",
+			"Icon": "icons/temperature",
+			"PropertyInspectorPath": "property-inspector/temperature.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$B1",
+				"TriggerDescription": {
+					"Rotate": "Temperature",
+					"Push": "Toggle power",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/temperature-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.scene",
+			"Name": "Scene",
+			"Tooltip": "Play a Govee scene, a DIY scene or a saved snapshot. On a dial: turn to browse scenes",
+			"Icon": "icons/scene",
+			"PropertyInspectorPath": "property-inspector/scene.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$A1",
+				"TriggerDescription": {
+					"Rotate": "Browse scenes",
+					"Push": "Toggle power",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/scene-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.preset",
+			"Name": "Preset",
+			"Tooltip": "Set power, colour and brightness in one press",
+			"Icon": "icons/preset",
+			"PropertyInspectorPath": "property-inspector/preset.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$B1",
+				"TriggerDescription": {
+					"Rotate": "Brightness",
+					"Push": "Apply preset",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/preset-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.cycle",
+			"Name": "Cycle",
+			"Tooltip": "Step through a list of colours, brightness levels, white temperatures or scenes",
+			"Icon": "icons/cycle",
+			"PropertyInspectorPath": "property-inspector/cycle.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$A1",
+				"TriggerDescription": {
+					"Rotate": "Next / previous",
+					"Push": "Toggle power",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/cycle-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.music",
+			"Name": "Music Mode",
+			"Tooltip": "Make lights react to sound. On a dial: turn to change the sensitivity",
+			"Icon": "icons/music",
+			"PropertyInspectorPath": "property-inspector/music.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$B1",
+				"TriggerDescription": {
+					"Rotate": "Sensitivity",
+					"Push": "Toggle power",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/music-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.segment",
+			"Name": "Segment Color",
+			"Tooltip": "Colour or dim individual segments of a light strip or bar",
+			"Icon": "icons/segment",
+			"PropertyInspectorPath": "property-inspector/segment.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$B1",
+				"TriggerDescription": {
+					"Rotate": "Hue / brightness",
+					"Push": "Toggle power",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/segment-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.toggle",
+			"Name": "Toggle",
+			"Tooltip": "Switch a device feature on or off: gradient, night light, DreamView, oscillation…",
+			"Icon": "icons/toggle",
+			"PropertyInspectorPath": "property-inspector/toggle.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"DisableAutomaticStates": true,
+			"Encoder": {
+				"layout": "$A1",
+				"TriggerDescription": {
+					"Push": "Toggle",
+					"Touch": "Toggle"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/toggle-off",
+					"Name": "Off"
+				},
+				{
+					"Image": "icons/toggle-on",
+					"Name": "On"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.sensor",
+			"Name": "Sensor",
+			"Tooltip": "Show the temperature and humidity from a Govee thermometer. Press to refresh",
+			"Icon": "icons/sensor",
+			"PropertyInspectorPath": "property-inspector/sensor.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$A1",
+				"TriggerDescription": {
+					"Push": "Refresh",
+					"Touch": "Refresh"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/sensor-key"
+				}
+			]
+		},
+		{
+			"UUID": "io.github.nnfisfree.govee-control.appliance",
+			"Name": "Appliance",
+			"Tooltip": "Set the mode or target temperature of a Govee heater, fan, purifier or humidifier",
+			"Icon": "icons/appliance",
+			"PropertyInspectorPath": "property-inspector/appliance.html",
+			"Controllers": [
+				"Keypad",
+				"Encoder"
+			],
+			"SupportedInMultiActions": true,
+			"Encoder": {
+				"layout": "$B1",
+				"TriggerDescription": {
+					"Rotate": "Level / temperature",
+					"Push": "Toggle power",
+					"Touch": "Toggle power"
+				}
+			},
+			"States": [
+				{
+					"Image": "icons/appliance-key"
+				}
+			]
+		}
+	]
+}

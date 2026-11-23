@@ -15,7 +15,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo fmt
 ```
 
-The end-to-end test (`crates/opendeck-plugin/tests/e2e.rs`) starts the real plugin binary against a fake OpenDeck and a mock Govee API. It needs no network access and no API key.
+The end-to-end test (`plugin/tests/e2e.rs`) starts the real plugin binary against a fake OpenDeck and a mock Govee API. It needs no network access and no API key.
 
 ## Run it in OpenDeck
 
@@ -52,4 +52,4 @@ Your Govee API key is personal. Never commit it, paste it into issues, or includ
 
 - `rustfmt.toml` sets tabs and a line width of 120. Run `cargo fmt` before committing.
 - CI fails on any clippy warning.
-- Keep `crates/govee-api` free of OpenDeck-specific code.
+- Keep `api/` free of OpenDeck-specific code.

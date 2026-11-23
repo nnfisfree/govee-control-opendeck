@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Sensor</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section>
+			<h2>Display</h2>
+			<div class="row">
+				<label for="show">Show</label>
+				<select id="show" data-setting="show">
+					<option value="both">Temperature and humidity</option>
+					<option value="temperature">Temperature</option>
+					<option value="humidity">Humidity</option>
+				</select>
+			</div>
+			<div class="row">
+				<label for="unit">Unit</label>
+				<select id="unit" data-setting="unit">
+					<option value="c">°C</option>
+					<option value="f">°F</option>
+				</select>
+			</div>
+			<p class="hint">
+				Shows the first ticked sensor. The reading refreshes every minute; press the key or dial to refresh now.
+			</p>
+		</section>
+		<script>
+			GoveePI.start({
+				feature: "sensor",
+				hold: false,
+				defaults: { devices: [], show: "both", unit: "c" },
+			});
+		</script>
+	</body>
+</html>

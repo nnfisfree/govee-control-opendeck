@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/govee-api", "crates/opendeck-plugin", "crates/govee-cli"]
+members = ["api", "plugin", "cli"]
 
 [workspace.package]
 version = "0.1.0"
@@ -11,7 +11,7 @@ repository = "https://github.com/nnfisfree/govee-control-opendeck"
 publish = false
 
 [workspace.dependencies]
-govee-api = { path = "crates/govee-api" }
+govee-api = { path = "api" }
 base64 = "0.23.1"
 log = "0.4.35"
 openaction = "2.8"

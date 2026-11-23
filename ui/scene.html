@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Scene</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section>
+			<h2>Scene</h2>
+			<div class="row">
+				<label for="source">Type</label>
+				<select id="source" data-setting="source">
+					<option value="scene">Govee scene</option>
+					<option value="diy">DIY scene</option>
+					<option value="snapshot">Snapshot</option>
+				</select>
+			</div>
+		</section>
+		<section id="devices"></section>
+		<section>
+			<div class="row">
+				<label for="scene">Scene</label>
+				<div class="inline">
+					<select id="scene" data-setting="scene"></select>
+					<button id="reload" title="Reload the list from Govee">↻</button>
+				</div>
+			</div>
+			<p class="hint" id="scene-hint"></p>
+			<div class="row" data-controller="Keypad">
+				<label for="show-name">Show name</label>
+				<input id="show-name" type="checkbox" data-setting="showName" />
+			</div>
+			<p class="hint" data-controller="Encoder">
+				Turn to browse the scenes every selected light has; the light switches when you stop. Press or tap to
+				toggle power.
+			</p>
+		</section>
+		<script>
+			const FEATURE = { scene: "lightScenes", diy: "diyScenes", snapshot: "snapshots" };
+			const sceneSelect = document.getElementById("scene");
+			const hint = document.getElementById("scene-hint");
+			let requested = "";
+
+			function requestScenes(force) {
+				const s = GoveePI.settings;
+				const devices = s.devices || [];
+				const key = s.source + JSON.stringify(devices);
+				if (!GoveePI.status?.hasKey || (!force && key === requested)) return;
+				requested = key;
+				if (devices.length === 0) {
+					GoveePI.fillSelect(sceneSelect, [], "Tick a light first");
+					hint.textContent = "";
+					return;
+				}
+				GoveePI.fillSelect(sceneSelect, [], "Loading…");
+				GoveePI.toPlugin({ type: "scenes", source: s.source, devices, refresh: !!force });
+			}
+
+			document.getElementById("reload").addEventListener("click", () => requestScenes(true));
+
+			GoveePI.start({
+				feature: (device, settings) => !!device.features[FEATURE[settings.source] || "scene"],
+				defaults: { devices: [], source: "scene", scene: "", showName: true },
+				onChange: () => requestScenes(false),
+				onMessage(payload) {
+					if (payload.type !== "scenes" || payload.source !== GoveePI.settings.source) return;
+					const names = payload.names || [];
+					GoveePI.fillSelect(
+						sceneSelect,
+						names.map((n) => ({ value: n })),
+						payload.error ? "Could not load scenes" : "No scenes found",
+					);
+					const several = (GoveePI.settings.devices || []).length > 1;
+					hint.textContent = payload.error
+						? payload.error
+						: GoveePI.settings.source === "snapshot" && names.length === 0
+							? "Save a snapshot in the Govee Home app, then press ↻."
+							: several
+								? "Only scenes that every selected light has are listed."
+								: "";
+				},
+			});
+		</script>
+	</body>
+</html>

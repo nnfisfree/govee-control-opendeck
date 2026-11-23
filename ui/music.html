@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Music Mode</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="common.js"></script>
+	</head>
+	<body>
+		<section id="account"></section>
+		<section id="devices"></section>
+		<section>
+			<h2>Music mode</h2>
+			<div class="row">
+				<label for="mode">Style</label>
+				<select id="mode" data-setting="mode"></select>
+			</div>
+			<div class="row">
+				<label for="sensitivity">Sensitivity</label>
+				<div class="inline">
+					<input id="sensitivity" type="range" min="0" max="100" data-setting="sensitivity" />
+					<output data-for="sensitivity" data-suffix="%"></output>
+				</div>
+			</div>
+			<div class="row">
+				<label for="auto-color">Auto colour</label>
+				<input id="auto-color" type="checkbox" data-setting="autoColor" />
+			</div>
+			<div class="row" data-show-if="autoColor:false">
+				<label for="color">Colour</label>
+				<input id="color" type="color" data-setting="color" />
+			</div>
+			<div class="row" data-controller="Keypad">
+				<label for="show-name">Show name</label>
+				<input id="show-name" type="checkbox" data-setting="showName" />
+			</div>
+			<p class="hint">The light listens through its own microphone.</p>
+		</section>
+		<section data-controller="Encoder">
+			<h2>Dial</h2>
+			<div class="row">
+				<label for="dial-step">% per tick</label>
+				<input id="dial-step" type="number" min="1" max="50" data-setting="dialStep" />
+			</div>
+			<p class="hint">Turn to change the sensitivity (this starts music mode), press or tap to toggle power.</p>
+		</section>
+		<script>
+			const modeSelect = document.getElementById("mode");
+
+			// Music styles every selected light has, in the first light's order.
+			function commonModes(devices) {
+				const lists = devices.map((d) => {
+					const c = (d.capabilities || []).find((c) => c.instance === "musicMode");
+					const field = (c?.parameters?.fields || []).find((f) => f.fieldName === "musicMode");
+					return (field?.options || []).map((o) => o.name);
+				});
+				if (lists.length === 0) return [];
+				return lists[0].filter((name) => lists.every((l) => l.some((n) => n.toLowerCase() === name.toLowerCase())));
+			}
+
+			let lastKey = "";
+			GoveePI.start({
+				feature: "music",
+				defaults: {
+					devices: [],
+					mode: "",
+					sensitivity: 50,
+					autoColor: true,
+					color: "#ff0000",
+					dialStep: 5,
+					showName: true,
+				},
+				onChange(s, status) {
+					const key = JSON.stringify(s.devices || []) + (status ? "1" : "0");
+					if (key === lastKey) return;
+					lastKey = key;
+					const names = commonModes(GoveePI.selectedDevices());
+					GoveePI.fillSelect(modeSelect, names.map((n) => ({ value: n })), "Tick a light first");
+				},
+			});
+		</script>
+	</body>
+</html>
