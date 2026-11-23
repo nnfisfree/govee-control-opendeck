@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.2.0 (2026-11-23)
+
+First public release, and the first one in the OpenDeck store.
+
 ### New actions
 - **Scene**: play a built-in Govee scene, a DIY scene or a saved snapshot. On a dial, turn to browse the scenes.
 - **Preset**: set power, colour (or white temperature) and brightness in one press.
@@ -18,10 +22,15 @@
 - The Color dial can step through a list of your own colours instead of shifting the hue.
 - The Power action also lists Govee appliances.
 - Scene and music-mode names are looked up on each device, so groups can mix light models.
+- Settings panels list only the devices that support each action, and say "devices" instead of "lights".
+
+### Changed
+- New project layout with top-level folders by role: `plugin/`, `api/`, `cli/`, `ui/` and `bundle/`.
+- The README is now also the plugin's page in the OpenDeck store, with a supported-devices table.
 
 ## 0.1.0
 
-First release.
+Release candidate, not published. It is included in 0.2.0.
 
 - Actions: Power, Brightness, Color and Color Temperature.
 - Every action works on keys and on Stream Deck+ dials (turn to adjust, press or tap to toggle power).

@@ -457,7 +457,7 @@ dependencies = [
 
 [[package]]
 name = "govee-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "log",
  "reqwest",
@@ -471,7 +471,7 @@ dependencies = [
 
 [[package]]
 name = "govee-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "govee-api",
  "tokio",
@@ -479,7 +479,7 @@ dependencies = [
 
 [[package]]
 name = "govee-control-opendeck"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "base64 0.23.1",
  "futures-util",
